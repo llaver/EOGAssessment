@@ -1,7 +1,10 @@
 # EOGAssessment
 React Assessments for EOG
 
-Assessments 1 and 2 complete. Assessment 3 will be pushed soon.
+To run:
+clone and navigate to an assessment folder
+npm init
+npm run start
 
 Assessment spec:
 https://github.com/jwo/react-assessment
