@@ -6,24 +6,28 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
 
+import { Redirect } from 'react-router-dom'
+
 class TodoTask extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      complete: this.props.task.completed
+      complete: this.props.task.completed,
+      redirect: false
     }
   }
 
   completeTask() {
-    this.setState({
-      complete: true
-    })
-
+    this.setState({complete: true})
     this.props.actions.completeTask(this.props.task.id)
   };
 
   deleteTask() {
     this.props.actions.deleteTask(this.props.task.id)
+  }
+
+  goToDetail = () => {
+    this.setState({redirect: true});
   }
 
   render(props) {
@@ -34,9 +38,12 @@ class TodoTask extends Component {
        margin: '1em',
        width: '20em'
     }
+    if (this.state.redirect) {
+      return <Redirect push to={`/tasks/${this.props.task.id}`}/>;
+    }
 
     return (
-      <ListItem key={this.props.task.id} style={listItemStyle}>
+      <ListItem onClick={this.goToDetail} key={this.props.task.id} style={listItemStyle}>
         <ListItemText primary={this.props.task.title} />
         <ListItemSecondaryAction>
           <Button variant='outlined' color='primary'

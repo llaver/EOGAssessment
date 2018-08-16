@@ -1,13 +1,15 @@
 let actions = {
-  fetchTasks: function() {
-    return {
-      type: 'FETCH_TASKS',
-    }
-  },
   addTask: function(title) {
     return {
       type: 'ADD_TASK',
       title: title,
+    }
+  },
+  updateTask: function(id, task) {
+    return {
+      type: 'UPDATE_TASK',
+      id: id,
+      task: task
     }
   },
   completeTask: function(id) {
@@ -22,11 +24,28 @@ let actions = {
       id: id
      }
   },
+  fetchTask: function(id) {
+    return {
+      type: 'FETCH_TASK',
+      id: id
+    }
+  },
+  fetchTasks: function() {
+    return {
+      type: 'FETCH_TASKS',
+    }
+  },
   setTasks: function(tasks) {
-    console.log(tasks)
     return {
       type: 'SET_TASKS',
       tasks: tasks
+    }
+  },
+  setTask: function(task, id) {
+    return {
+      type: 'SET_TASK',
+      tasks: task,
+      id: id
     }
   },
   fetchFailed: function(e) {

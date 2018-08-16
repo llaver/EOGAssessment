@@ -6,6 +6,16 @@ import { bindActionCreators } from 'redux'
 import actions from '../redux/actions'
 
 class TodoList extends Component {
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			fetched: false
+		}
+	}
+	componentDidMount() {
+		this.props.actions.fetchTasks()
+	}
 	render() {
 		return (
 			<div className="todoList">
