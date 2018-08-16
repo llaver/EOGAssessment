@@ -1,10 +1,9 @@
 let actions = {
-  setTask: function(tasks) {
+  fetchTasks: function() {
     return {
-      type: 'SET_TASK',
-      tasks: tasks
+      type: 'FETCH_TASKS',
     }
-  }
+  },
   addTask: function(title) {
     return {
       type: 'ADD_TASK',
@@ -23,5 +22,18 @@ let actions = {
       id: id
      }
   },
+  setTasks: function(tasks) {
+    console.log(tasks)
+    return {
+      type: 'SET_TASKS',
+      tasks: tasks
+    }
+  },
+  fetchFailed: function(e) {
+    return {
+      type: 'FETCH_FAILED',
+      e: e
+    }
+  }
 }
 export default actions
