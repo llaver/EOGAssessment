@@ -1,6 +1,9 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux'
 import { Link, Redirect } from "react-router-dom"
+import { Field, Form, reduxForm, change } from "redux-form"
+import { withStyles } from '@material-ui/core/styles'
+import classnames from 'classnames'
 import Button from '@material-ui/core/Button'
 
 class TaskDetail extends Component {
@@ -14,24 +17,26 @@ class TaskDetail extends Component {
     this.updateTask = this.updateTask.bind(this)
   }
 
-  updateTask(e) {
-    var taskTitle = this.titleRef.value
-    var taskDesc = this.descRef.value
-		if(taskTitle !== "") {
+  componentDidUpdate(prevProps) {
+    if(this.props.task && prevProps.task !== this.props.task) {
+      this.props.dispatch(change('taskDetail', 'title', this.props.task.title))
+      this.props.dispatch(change('taskDetail', 'description', this.props.task.description))
+    }
+  }
+
+  updateTask(values) {
+		if(values.title !== "") {
       this.props.actions.updateTask(this.props.id, Object.assign({}, this.props.task, {
-        title: taskTitle,
-        description: taskDesc
+        title: values.title,
+        description: values.description
       }))
-			this.titleRef.value = ""
-      this.descRef.value = ""
 		}
     this.setState({redirect: true})
-    e.preventDefault()
 	}
 
   resetForm() {
-    this.titleRef.value = this.props.task.title
-    this.descRef.value = this.props.task.description
+    this.props.dispatch(change('taskDetail', 'title', this.props.task.title))
+    this.props.dispatch(change('taskDetail', 'description', this.props.task.description))
   }
 
   completeTask() {
@@ -45,48 +50,78 @@ class TaskDetail extends Component {
   }
 
   render(props) {
-    var formStyle = {
-      boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
-      width: 'fit-content'
-    }
-    var titleStyle = {
-  		fontFamily: '"Roboto", sans-serif',
-  		fontSize: '30px',
-  		margin: '1rem',
-  		fontWeight: 'bold'
-  	}
-    var inputStyle = {
-  		height: '2rem',
-  		border: '1px solid #9E9E9E',
-  		margin: '1rem',
-  		fontFamily: '"Roboto", sans-serif',
-  		fontSize: '25px',
-  		boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
-  	}
-    var buttonStyle = {
-  		margin: '1rem',
-  		fontFamily: '"Roboto", sans-serif',
-  		fontWeight: 'bold'
-  	}
     if (this.state.redirect) {
       return <Redirect push to={`/`}/>;
     }
 
-    const task = this.props.task
+    const { handleSubmit, classes } = this.props
+
+    const getClass = (classKey) => {return classnames(classes.all, classKey)}
+
     return (
-      <div className="form" style={formStyle}>
-        <Link to={`/`} style={titleStyle}>Return to Task List</Link>
-        <form onSubmit={this.updateTask}>
-          <input ref={(text) => this.titleRef = text} style={inputStyle} defaultValue={task === undefined ? '' : task.title} className="task-title"/><br/>
-          <input ref={(text) => this.descRef = text} style={inputStyle} defaultValue={task === undefined ? '' : task.description} className="task-desc"/><br/>
-          <Button variant="contained" color="primary" type="submit" style={buttonStyle}>Update Task</Button>
-          <Button variant="contained" color="primary"  style={buttonStyle} onClick={() => this.resetForm()}>Reset</Button>
-          <Button variant="contained" color='primary' style={buttonStyle} onClick={() => this.deleteTask()}>Delete</Button>
-          <Button variant="contained" color='primary' style={buttonStyle} onClick={() => this.completeTask()}>Complete</Button>
-        </form>
+      <div className={getClass(classes.form)}>
+        <Link to={`/`} className={classes.title}>Return to Task List</Link>
+        <Form onSubmit={handleSubmit(this.updateTask.bind(this))}>
+          <Field className={getClass(classes.input)}
+            name="title" component="input" type="text" label="Title"
+          /><br/>
+          <Field className={getClass(classes.input)}
+            name="description" component="input" type="text" label="Description"
+          /><br/>
+          <Button
+            variant="contained" color="primary" type="submit"
+            className={getClass(classes.button)}>Update Task
+          </Button>
+          <Button
+            variant="contained" color="primary" className={getClass(classes.button)}
+            onClick={() => this.resetForm()}>Reset
+          </Button>
+          <Button
+            variant="contained" color='primary' className={getClass(classes.button)}
+            onClick={() => this.deleteTask()}>Delete
+          </Button>
+          <Button
+            variant="contained" color='primary' className={getClass(classes.button)}
+            onClick={() => this.completeTask()}>Complete
+          </Button>
+        </Form>
       </div>
     )
   }
 }
-function mapStateToProps(state) {return state.task}
-export default connect(mapStateToProps) (TaskDetail)
+const styles = {
+  all: {
+    boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+    fontFamily: '"Roboto", sans-serif',
+    margin: '1rem',
+  },
+  form: {
+    width: 'fit-content'
+  },
+  title: {
+    fontSize: '30px',
+    fontWeight: 'bold',
+    boxShadow: 'none'
+  },
+  input: {
+    height: '2rem',
+    border: '1px solid #9E9E9E',
+    fontSize: '25px',
+  },
+  button: {
+    fontFamily: '"Roboto", sans-serif',
+    fontWeight: 'bold'
+  }
+}
+function mapStateToProps(state) {
+  return {
+    task: state.taskList.task,
+    form: state.form,
+  }
+}
+TaskDetail = connect(
+    mapStateToProps,
+)(TaskDetail)
+export default reduxForm({
+  form: 'taskDetail' // a unique identifier for this form
+})(withStyles(styles)(TaskDetail))

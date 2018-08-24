@@ -27,7 +27,7 @@ class TodoList extends Component {
 	}
 }
 
-function mapStateToProps(state) {return state}
+function mapStateToProps(state) {return state.taskList}
 function mapDispatchToProps(dispatch) {
 	return {actions: bindActionCreators(actions, dispatch)}}
 export default connect(mapStateToProps, mapDispatchToProps) (TodoList)

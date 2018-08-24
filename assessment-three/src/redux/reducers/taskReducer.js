@@ -1,4 +1,14 @@
-let reducer = (state, action) => {
+const initialState = {
+  tasks: [],
+  task: {
+    id: '',
+    title: '',
+    description: '',
+    complete: false
+  }
+}
+
+let taskReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_TASK':
     return state
@@ -21,14 +31,11 @@ let reducer = (state, action) => {
       return state
     case 'SET_TASKS':
       return Object.assign({}, state, {
-        tasks: action.tasks
+        tasks: action.tasks,
+        task: action.tasks.find((task) => {
+          return parseInt(task.id, 10) === parseInt(action.id, 10)
+        })
       })
-    case 'SET_TASK':
-    return Object.assign({}, state, {
-      task: action.tasks.find((task) => {
-        return parseInt(task.id, 10) === parseInt(action.id, 10)
-      })
-    })
     case 'FETCH_FAILED':
       console.log(action.e)
       return state
@@ -36,4 +43,4 @@ let reducer = (state, action) => {
       return state
     }
 }
-export default reducer
+export default taskReducer

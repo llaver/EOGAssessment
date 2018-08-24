@@ -7,17 +7,7 @@ import registerServiceWorker from './registerServiceWorker'
 import rootSaga from './redux/sagas'
 import App from './App'
 
-let initialState = {
-  tasks: [],
-  task: {
-    id: '',
-    title: '',
-    description: '',
-    complete: false
-  }
-}
-
-let store = configureStore(initialState)
+let store = configureStore()
 store.runSaga(rootSaga)
 const root = document.getElementById('root')
 

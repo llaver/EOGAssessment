@@ -2,49 +2,51 @@ let actions = {
   addTask: function(title) {
     return {
       type: 'ADD_TASK',
-      title: title,
+      method: 'POST',
+      url: '',
+      body: JSON.stringify({title: title}),
     }
   },
   updateTask: function(id, task) {
     return {
       type: 'UPDATE_TASK',
-      id: id,
-      task: task
+      method: 'PATCH',
+      url: id,
+      body: JSON.stringify({
+        title: task.title,
+        description: task.description,
+        completed: task.complete
+      })
     }
   },
   completeTask: function(id) {
     return {
       type: 'COMPLETE_TASK',
-      id: id
+      method: 'PUT',
+      url: id,
+      body: JSON.stringify({id: id})
     }
   },
   deleteTask: function(id) {
     return {
       type: 'DELETE_TASK',
-      id: id
+      method: 'DELETE',
+      url: id,
+      body: JSON.stringify({id: id})
      }
   },
-  fetchTask: function(id) {
-    return {
-      type: 'FETCH_TASK',
-      id: id
-    }
-  },
-  fetchTasks: function() {
+  fetchTasks: function(id='') {
     return {
       type: 'FETCH_TASKS',
+      method: 'GET',
+      id: id,
+      url: '',
     }
   },
-  setTasks: function(tasks) {
+  setTasks: function(tasks, id='') {
     return {
       type: 'SET_TASKS',
-      tasks: tasks
-    }
-  },
-  setTask: function(task, id) {
-    return {
-      type: 'SET_TASK',
-      tasks: task,
+      tasks: tasks,
       id: id
     }
   },

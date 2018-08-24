@@ -1,5 +1,7 @@
 import React, { Component } from "react"
+import classnames from 'classnames'
 import ListItem from '@material-ui/core/ListItem'
+import { withStyles } from '@material-ui/core/styles'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Button from '@material-ui/core/Button'
@@ -11,16 +13,15 @@ import { Redirect } from 'react-router-dom'
 class TodoTask extends Component {
   constructor(props) {
     super(props)
+
     this.state = {
-      complete: this.props.task.completed,
       redirect: false
     }
   }
 
   completeTask() {
-    this.setState({complete: true})
     this.props.actions.completeTask(this.props.task.id)
-  };
+  }
 
   deleteTask() {
     this.props.actions.deleteTask(this.props.task.id)
@@ -31,23 +32,19 @@ class TodoTask extends Component {
   }
 
   render(props) {
-    var listItemStyle = {
-       backgroundColor: this.state.complete ? '#BDD5BD' : 'none',
-       border: '0.1rem outset lightgrey',
-       borderRadius: '4px',
-       margin: '1em',
-       width: '20em'
-    }
+    const { classes } = this.props
+
     if (this.state.redirect) {
       return <Redirect push to={`/tasks/${this.props.task.id}`}/>;
     }
 
     return (
-      <ListItem onClick={this.goToDetail} key={this.props.task.id} style={listItemStyle}>
+      <ListItem onClick={this.goToDetail} key={this.props.task.id}
+        className={classnames(classes.listItem, {[classes.complete]: this.props.task.completed})}>
         <ListItemText primary={this.props.task.title} />
         <ListItemSecondaryAction>
           <Button variant='outlined' color='primary'
-            style={{backgroundColor: this.state.complete ? 'grey' : 'none' }}
+            className={classnames({[classes.buttonComplete]: this.props.task.completed})}
             onClick={() => this.completeTask()}>Complete</Button>
           <IconButton aria-label="Delete" onClick={() => this.deleteTask()}>
             <DeleteIcon />
@@ -57,4 +54,18 @@ class TodoTask extends Component {
     )
   }
 }
-export default TodoTask
+const styles = {
+  listItem: {
+     border: '0.1rem outset lightgrey',
+     borderRadius: '4px',
+     margin: '1em',
+     width: '20em'
+  },
+  complete: {
+    backgroundColor: '#BDD5BD'
+  },
+  buttonComplete: {
+    backgroundColor: 'grey'
+  }
+}
+export default withStyles(styles)(TodoTask)
